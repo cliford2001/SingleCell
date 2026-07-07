@@ -9,7 +9,7 @@
 # ── Configuration (must match capitulo1_single_cell.R) ───────────────────────────────
 PIPELINE_DIR <- "/workspace/SingleCell/workflow"
 DATA_DIR     <- "/workspace/."
-base_dir     <- file.path(DATA_DIR, "resultados")
+base_dir     <- file.path(DATA_DIR, "resultados_v1")
 
 source(file.path(PIPELINE_DIR, "load_libraries.R"))
 source(file.path(PIPELINE_DIR, "custom_seurat.R"))
@@ -99,7 +99,8 @@ message("\n✓ SECTION 15 COMPLETE: Pseudo-replicates assigned")
 #   Example:
 #     conds = c("0N", "5N") means log2FC = log2(5N / 0N)
 comparisons <- list(
-  list(conds = c("condition_1", "condition_2"), tag = "condition_1_vs_condition_2")
+  list(conds = c("0N",   "0.5N"), tag = "0N_vs_05N"),
+  list(conds = c("0.5N", "5N"),  tag = "05N_vs_5N")
 )
 
 # Edit here:
@@ -139,7 +140,7 @@ message("\n✓ SECTION 16 COMPLETE: Pseudobulk aggregation and DESeq2 complete")
 #
 #   padj_cut = adjusted p-value threshold
 #   lfc_cut  = absolute log2 fold-change threshold
-volcano_tag <- "condition_1_vs_condition_2"
+volcano_tag <- "05N_vs_5N"
 padj_cut    <- 0.05
 lfc_cut     <- 1
 

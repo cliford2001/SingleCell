@@ -9,7 +9,7 @@
 # ── Configuration (must match capitulo1_single_cell.R) ───────────────────────────────
 PIPELINE_DIR <- "/workspace/SingleCell/workflow"
 DATA_DIR     <- "/workspace/."
-base_dir     <- file.path(DATA_DIR, "resultados")
+base_dir     <- file.path(DATA_DIR, "resultados_v2")
 
 source(file.path(PIPELINE_DIR, "load_libraries.R"))
 source(file.path(PIPELINE_DIR, "custom_seurat.R"))

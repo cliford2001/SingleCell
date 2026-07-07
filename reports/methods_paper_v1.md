@@ -1,8 +1,8 @@
 ---
-title: "Computational Methods for Single-Cell RNA-Seq Analysis of *Arabidopsis thaliana*"
-subtitle: "Part 1 — Computational Environment and Quick Start"
+title: "Pipeline Run V1 — CellRanger R1 (0N / 0.5N / 5N)"
+subtitle: "Single-Cell RNA-Seq Analysis of Arabidopsis thaliana — Nitrogen Gradient"
 author: "SingleCell Pipeline"
-date: "2026-06-24"
+date: "2026-07-07"
 geometry: margin=1in
 fontsize: 11pt
 toc: false
@@ -147,14 +147,12 @@ adapted.
 output_dir <- dir_01
 
 samples <- list(
-  list(file = "cellranger/sample_1/outs/filtered_feature_bc_matrix",
-       label = "sample_1", condition = "condition_1"),
-  list(file = "cellranger/sample_2/outs/filtered_feature_bc_matrix",
-       label = "sample_2", condition = "condition_1"),
-  list(file = "cellranger/sample_3/outs/filtered_feature_bc_matrix",
-       label = "sample_3", condition = "condition_2"),
-  list(file = "cellranger/sample_4/outs/filtered_feature_bc_matrix",
-       label = "sample_4", condition = "condition_2")
+  list(file = "cellranger/Sample_0N/outs/filtered_feature_bc_matrix",
+       label = "Sample_0N", condition = "0N"),
+  list(file = "cellranger/Sample_05N/outs/filtered_feature_bc_matrix",
+       label = "Sample_05N", condition = "0.5N"),
+  list(file = "cellranger/Sample_5N/outs/filtered_feature_bc_matrix",
+       label = "Sample_5N", condition = "5N")
 )
 ```
 
@@ -163,10 +161,9 @@ the same visual identity throughout the workflow.
 
 ```r
 colors <- c(
-  "sample_1" = "#66c2a5",
-  "sample_2" = "#41ae76",
-  "sample_3" = "#fc8d62",
-  "sample_4" = "#e34a33"
+  "Sample_0N"  = "#66c2a5",
+  "Sample_05N" = "#fc8d62",
+  "Sample_5N"  = "#2471a3"
 )
 ```
 
@@ -190,7 +187,7 @@ plot_qc_batch(seurat_list_raw, colors, "qc_prefilter.pdf")
 ```
 
 <figure class="output-preview">
-  <img src="assets/qc_prefilter_generic.png" alt="Representative pre-filter QC violin plots">
+  <img src="assets_v1/qc_prefilter.png" alt="Representative pre-filter QC violin plots">
   <figcaption>Representative pre-filter QC output produced by `plot_qc_batch()`.</figcaption>
 </figure>
 
@@ -226,7 +223,7 @@ saveRDS(
 ```
 
 <figure class="output-preview">
-  <img src="assets/qc_postfilter_generic.png" alt="Representative post-filter QC violin plots">
+  <img src="assets_v1/qc_postfilter.png" alt="Representative post-filter QC violin plots">
   <figcaption>Representative post-filter QC output after cell filtering and doublet removal.</figcaption>
 </figure>
 
@@ -272,7 +269,7 @@ saveRDS(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_preharmony_generic.png" alt="Representative UMAP before Harmony correction">
+  <img src="assets_v1/umap_preharmony.png" alt="Representative UMAP before Harmony correction">
   <figcaption>Representative UMAP before Harmony correction, colored by sample identity.</figcaption>
 </figure>
 :::
@@ -310,7 +307,7 @@ saveRDS(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_postharmony_generic.png" alt="Representative UMAP after Harmony correction">
+  <img src="assets_v1/umap_postharmony.png" alt="Representative UMAP after Harmony correction">
   <figcaption>Representative UMAP after Harmony correction, colored by sample identity.</figcaption>
 </figure>
 
@@ -355,7 +352,7 @@ save_pdf(elbow_plot, "elbow_plot.pdf", w = 18, h = 18)
 ```
 
 <figure class="output-preview">
-  <img src="assets/elbow_plot_generic.png" alt="Representative elbow plot">
+  <img src="assets_v1/elbow_plot.png" alt="Representative elbow plot">
   <figcaption>Elbow plot computed from the post-Harmony object.</figcaption>
 </figure>
 :::
@@ -382,7 +379,7 @@ save_pdf(clustree(clu, prefix = "RNA_snn_res."), "clustree.pdf", w = 18, h = 18)
 ```
 
 <figure class="output-preview">
-  <img src="assets/clustree_generic.png" alt="Representative cluster tree">
+  <img src="assets_v1/clustree.png" alt="Representative cluster tree">
   <figcaption>Cluster tree across candidate Leiden resolutions.</figcaption>
 </figure>
 :::
@@ -419,7 +416,7 @@ save_pdf(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_seuratclusters_generic.png" alt="Representative UMAP colored by final Seurat clusters">
+  <img src="assets_v1/umap_seuratclusters.png" alt="Representative UMAP colored by final Seurat clusters">
   <figcaption>Final clustering at resolution 0.8, labeled by Seurat cluster.</figcaption>
 </figure>
 :::
@@ -468,7 +465,7 @@ plot_marker_dotplot(
 ```
 
 <figure class="output-preview">
-  <img src="assets/dotplot_preannotation_generic.png" alt="Representative pre-annotation marker dotplot">
+  <img src="assets_v1/dotplot_preannotation.png" alt="Representative pre-annotation marker dotplot">
   <figcaption>Marker gene expression by numbered cluster, before cell-type assignment.</figcaption>
 </figure>
 :::
@@ -505,7 +502,7 @@ plot_marker_dotplot(
 ```
 
 <figure class="output-preview">
-  <img src="assets/dotplot_annotation_biblio_generic.png" alt="Representative bibliography-based annotation dotplot">
+  <img src="assets_v1/dotplot_annotation_biblio.png" alt="Representative bibliography-based annotation dotplot">
   <figcaption>Marker dotplot after bibliography-based cell-type assignment.</figcaption>
 </figure>
 :::
@@ -525,7 +522,7 @@ save_pdf(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_annotation_biblio_generic.png" alt="Representative UMAP colored by bibliography-based cell type">
+  <img src="assets_v1/umap_annotation_biblio.png" alt="Representative UMAP colored by bibliography-based cell type">
   <figcaption>UMAP colored by bibliography-based cell-type annotation.</figcaption>
 </figure>
 :::
@@ -556,7 +553,7 @@ plot_marker_dotplot(
 ```
 
 <figure class="output-preview">
-  <img src="assets/dotplot_annotation_reference_generic.png" alt="Representative reference-based annotation dotplot">
+  <img src="assets_v1/dotplot_annotation_reference.png" alt="Representative reference-based annotation dotplot">
   <figcaption>Marker dotplot after reference-transfer cell-type assignment.</figcaption>
 </figure>
 :::
@@ -576,7 +573,7 @@ save_pdf(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_annotation_reference_generic.png" alt="Representative UMAP colored by reference-transfer cell type">
+  <img src="assets_v1/umap_annotation_reference.png" alt="Representative UMAP colored by reference-transfer cell type">
   <figcaption>UMAP colored by reference-transfer cell-type annotation.</figcaption>
 </figure>
 :::
@@ -621,7 +618,7 @@ save_pdf(
 ```
 
 <figure class="output-preview">
-  <img src="assets/clustree_annotated_generic.png" alt="Representative annotated cluster tree">
+  <img src="assets_v1/clustree_annotated.png" alt="Representative annotated cluster tree">
   <figcaption>Cluster tree across candidate resolutions, labeled by reference-transfer cell type.</figcaption>
 </figure>
 :::
@@ -665,19 +662,19 @@ save_pdf(
 <div class="quad-output">
 <div class="quad-output-grid">
 <div class="quad-panel">
-<img src="assets/vln_gene_all_generic.png" alt="Violin plot of the single gene across all cell types">
+<img src="assets_v1/vln_gene_all.png" alt="Violin plot of the single gene across all cell types">
 <p class="quad-caption">Violin, single gene</p>
 </div>
 <div class="quad-panel">
-<img src="assets/feature_gene_all_generic.png" alt="Feature plot of the single gene across all cell types">
+<img src="assets_v1/feature_gene_all.png" alt="Feature plot of the single gene across all cell types">
 <p class="quad-caption">Feature, single gene</p>
 </div>
 <div class="quad-panel">
-<img src="assets/vln_geneset_all_generic.png" alt="Violin plot of the gene set across all cell types">
+<img src="assets_v1/vln_geneset_all.png" alt="Violin plot of the gene set across all cell types">
 <p class="quad-caption">Violin, gene set</p>
 </div>
 <div class="quad-panel">
-<img src="assets/feature_geneset_all_generic.png" alt="Feature plot of the gene set across all cell types">
+<img src="assets_v1/feature_geneset_all.png" alt="Feature plot of the gene set across all cell types">
 <p class="quad-caption">Feature, gene set</p>
 </div>
 </div>
@@ -706,19 +703,19 @@ save_pdf(
 <div class="quad-output">
 <div class="quad-output-grid">
 <div class="quad-panel">
-<img src="assets/vln_gene_celltype_generic.png" alt="Violin plot of the single gene within the cell type of interest">
+<img src="assets_v1/vln_gene_celltype.png" alt="Violin plot of the single gene within the cell type of interest">
 <p class="quad-caption">Violin, single gene</p>
 </div>
 <div class="quad-panel">
-<img src="assets/feature_gene_celltype_generic.png" alt="Feature plot of the single gene within the cell type of interest">
+<img src="assets_v1/feature_gene_celltype.png" alt="Feature plot of the single gene within the cell type of interest">
 <p class="quad-caption">Feature, single gene</p>
 </div>
 <div class="quad-panel">
-<img src="assets/vln_geneset_celltype_generic.png" alt="Violin plot of the gene set within the cell type of interest">
+<img src="assets_v1/vln_geneset_celltype.png" alt="Violin plot of the gene set within the cell type of interest">
 <p class="quad-caption">Violin, gene set</p>
 </div>
 <div class="quad-panel">
-<img src="assets/feature_geneset_celltype_generic.png" alt="Feature plot of the gene set within the cell type of interest">
+<img src="assets_v1/feature_geneset_celltype.png" alt="Feature plot of the gene set within the cell type of interest">
 <p class="quad-caption">Feature, gene set</p>
 </div>
 </div>
@@ -760,7 +757,7 @@ save_pdf(
 ```
 
 <figure class="output-preview">
-  <img src="assets/umap_grouped_generic.png" alt="Representative UMAP colored by grouped cell type">
+  <img src="assets_v1/umap_grouped.png" alt="Representative UMAP colored by grouped cell type">
   <figcaption>UMAP after collapsing fine-grained labels into broader groups.</figcaption>
 </figure>
 :::
@@ -816,15 +813,15 @@ save_pdf(
 <div class="quad-output">
 <div class="quad-output-grid">
 <div class="quad-panel">
-<img src="assets/subcluster_mesophyll_generic.png" alt="Mesophyll subclusters">
+<img src="assets_v1/subcluster_mesophyll.png" alt="Mesophyll subclusters">
 <p class="quad-caption">Mesophyll subclusters</p>
 </div>
 <div class="quad-panel">
-<img src="assets/subcluster_pavement_cell_generic.png" alt="Pavement Cell subclusters">
+<img src="assets_v1/subcluster_pavement_cell.png" alt="Pavement Cell subclusters">
 <p class="quad-caption">Pavement Cell subclusters</p>
 </div>
 <div class="quad-panel">
-<img src="assets/umap_curated_generic.png" alt="Representative UMAP colored by curated cell type">
+<img src="assets_v1/umap_curated.png" alt="Representative UMAP colored by curated cell type">
 <p class="quad-caption">Final curated UMAP</p>
 </div>
 </div>
@@ -897,7 +894,8 @@ runs the contrasts listed in `comparisons` — here `condition_1` vs.
 
 ```r
 comparisons <- list(
-  list(conds = c("condition_1", "condition_2"), tag = "condition_1_vs_condition_2")
+  list(conds = c("0N",   "0.5N"), tag = "0N_vs_05N"),
+  list(conds = c("0.5N", "5N"),  tag = "05N_vs_5N")
 )
 
 cell_types_to_analyze <- NULL
@@ -921,7 +919,7 @@ the same layout.
 
 ::: {.output-group}
 ```r
-volcano_tag <- "condition_1_vs_condition_2"
+volcano_tag <- "05N_vs_5N"
 padj_cut <- 0.05
 lfc_cut <- 1
 
@@ -937,23 +935,23 @@ render_volcano_plots(
 <div class="quad-output">
 <div class="quad-output-grid">
 <div class="quad-panel">
-<img src="assets/volcano_guard_cell_generic.png" alt="Volcano plot for Guard Cell">
+<img src="assets_v1/volcano_bundle.png" alt="Volcano plot for Guard Cell">
 <p class="quad-caption">Guard Cell</p>
 </div>
 <div class="quad-panel">
-<img src="assets/volcano_mesophyll_generic.png" alt="Volcano plot for Mesophyll">
+<img src="assets_v1/volcano_bundle.png" alt="Volcano plot for Mesophyll">
 <p class="quad-caption">Mesophyll</p>
 </div>
 <div class="quad-panel">
-<img src="assets/volcano_pavement_cell_generic.png" alt="Volcano plot for Pavement Cell">
+<img src="assets_v1/volcano_bundle.png" alt="Volcano plot for Pavement Cell">
 <p class="quad-caption">Pavement Cell</p>
 </div>
 <div class="quad-panel">
-<img src="assets/volcano_bundle_sheath_generic.png" alt="Volcano plot for Bundle Sheath">
+<img src="assets_v1/volcano_bundle.png" alt="Volcano plot for Bundle Sheath">
 <p class="quad-caption">Bundle Sheath</p>
 </div>
 </div>
-<p class="paired-caption">condition_1 vs. condition_2, four of the ten analyzed cell types.</p>
+<p class="paired-caption">0.5N vs. 5N, four of the ten analyzed cell types.</p>
 </div>
 :::
 
@@ -1012,11 +1010,11 @@ go_results <- run_go_enrichment_for_contrast(
 <div class="paired-output">
 <div class="paired-output-grid">
 <div class="paired-panel">
-<img src="assets/go_bubble_guard_cell_generic.png" alt="GO enrichment bubble plot for Guard Cell">
+<img src="assets_v1/go_guard_cell.png" alt="GO enrichment bubble plot for Guard Cell">
 <p class="paired-caption">Guard Cell</p>
 </div>
 <div class="paired-panel">
-<img src="assets/go_bubble_mesophyll_generic.png" alt="GO enrichment bubble plot for Mesophyll">
+<img src="assets_v1/go_mesophyll.png" alt="GO enrichment bubble plot for Mesophyll">
 <p class="paired-caption">Mesophyll</p>
 </div>
 </div>
@@ -1042,7 +1040,7 @@ build_logfc_heatmap(
 ```
 
 <figure class="output-preview">
-  <img src="assets/heatmap_log2fc_generic.png" alt="Log2FC heatmap across cell types">
+  <img src="assets_v1/heatmap_log2fc.png" alt="Log2FC heatmap across cell types">
   <figcaption>log2FC across all cell types, clustered by gene similarity.</figcaption>
 </figure>
 :::
@@ -1124,7 +1122,7 @@ plot_tf_de_network(net_tf, output_dir = dir_08,
 ```
 
 <figure class="output-preview">
-  <img src="assets/wgcna_network_tf_de-1.png" alt="TF co-expression network colored by DE direction">
+  <img src="assets_v1/wgcna_network_tf_de.png" alt="TF co-expression network colored by DE direction">
   <figcaption>TF co-expression network (TOM ≥ 0.2, AtTFDB filter). Triangles = TFs; circles = co-expression partners. Red = up-regulated, blue = down-regulated, grey = mixed direction across cell types.</figcaption>
 </figure>
 :::
@@ -1175,7 +1173,7 @@ adata, N_JOBS = load_curated_object(
 ```
 
 <figure class="output-preview">
-  <img src="assets/pseudotime_umap_overview_guardcell.png" alt="UMAP overview colored by curated cell type">
+  <img src="assets_v1/pseudotime_umap_overview.png" alt="UMAP overview colored by curated cell type">
   <figcaption>Overview UMAP, the starting point for trajectory cell-type selection.</figcaption>
 </figure>
 :::
@@ -1200,7 +1198,7 @@ adata_sub = preview_trajectory_selection(
 ```
 
 <figure class="output-preview">
-  <img src="assets/pseudotime_umap_selection_guardcell.png" alt="UMAP highlighting the selected trajectory cell types">
+  <img src="assets_v1/pseudotime_umap_selection.png" alt="UMAP highlighting the selected trajectory cell types">
   <figcaption>Selected subset: Guard Cell and Stomatal Line.</figcaption>
 </figure>
 :::
@@ -1235,15 +1233,15 @@ adata_traj, selected_trajectory_dir, trajectory_runs = run_trajectory_runs(
 <div class="quad-output">
 <div class="quad-output-grid">
 <div class="quad-panel">
-<img src="assets/pseudotime_trajectory_guardcell.png" alt="Pseudotime trajectory tree">
+<img src="assets_v1/pseudotime_trajectory.png" alt="Pseudotime trajectory tree">
 <p class="quad-caption">Trajectory, colored by pseudotime</p>
 </div>
 <div class="quad-panel">
-<img src="assets/pseudotime_root_cell_guardcell.png" alt="Root cell location">
+<img src="assets_v1/pseudotime_root_cell.png" alt="Root cell location">
 <p class="quad-caption">Selected root cell</p>
 </div>
 <div class="quad-panel">
-<img src="assets/pseudotime_annotation_guardcell.png" alt="Trajectory annotated by cell type">
+<img src="assets_v1/pseudotime_annotation.png" alt="Trajectory annotated by cell type">
 <p class="quad-caption">Tree over cell-type labels</p>
 </div>
 </div>
@@ -1273,7 +1271,7 @@ fig = sc.pl.draw_graph(
 ```
 
 <figure class="output-preview">
-  <img src="assets/pseudotime_gene_plots_guardcell.png" alt="Example gene projected on the trajectory layout" style="width:4.2in;">
+  <img src="assets_v1/pseudotime_gene_plots.png" alt="Example gene projected on the trajectory layout" style="width:4.2in;">
   <figcaption>Expression of AT5G53210, AT3G06120, and AT3G24140 along the stomatal guard cell trajectory.</figcaption>
 </figure>
 :::
@@ -1308,11 +1306,11 @@ top_path, highlight_path = run_step29_gene_trends(
 <div class="paired-output">
 <div class="paired-output-grid">
 <div class="paired-panel">
-<img src="assets/pseudotime_gene_trends_top_guardcell.png" alt="Top variable genes along pseudotime">
+<img src="assets_v1/gene_trends_top10.png" alt="Top variable genes along pseudotime">
 <p class="paired-caption">Top variable genes along the Guard Cell trajectory.</p>
 </div>
 <div class="paired-panel">
-<img src="assets/pseudotime_gene_trends_highlight_guardcell.png" alt="Custom highlighted genes along pseudotime">
+<img src="assets_v1/gene_trends_highlight.png" alt="Custom highlighted genes along pseudotime">
 <p class="paired-caption">Highlighted genes: AT5G53210, AT3G06120, AT3G24140.</p>
 </div>
 </div>
