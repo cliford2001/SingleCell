@@ -973,9 +973,9 @@ or subclusters into broader groups. It uses the `grouping` object as a small
 renaming table: the names on the left are the current labels, and the values on
 the right are the new labels.
 
-For example, in this report `Epidermis Hypocotyl.1`, `.2`, and `.3` are all
-renamed as `Epidermis Hypocotyl`. Any cell type that is not listed in
-`grouping` keeps its original label.
+For example, in this report `Epidermis Cotyledon.1` and `.2` are renamed as
+`Epidermis Cotyledon`. Any cell type that is not listed in `grouping` keeps its
+original label.
 
 Use this section when the detailed annotation is useful for inspection but a
 simpler grouping is better for figures or downstream summaries. The grouped
@@ -983,11 +983,10 @@ labels are stored in `celltype_grouped`, and the grouped UMAP is saved as
 `results/05_curation/umap_grouped.pdf`.
 
 ```{r section_10_cell_type_grouping_optional, strip_comments=FALSE}
-# Merge the three epidermis hypocotyl subclusters into a single label
+# Merge the two epidermis cotyledon subclusters into a single label
 grouping <- c(
-  "Epidermis Hypocotyl.1" = "Epidermis Hypocotyl",
-  "Epidermis Hypocotyl.2" = "Epidermis Hypocotyl",
-  "Epidermis Hypocotyl.3" = "Epidermis Hypocotyl"
+  "Epidermis Cotyledon.1" = "Epidermis Cotyledon",
+  "Epidermis Cotyledon.2" = "Epidermis Cotyledon"
 )
 
 output_dir <- dir_05
@@ -1133,7 +1132,7 @@ how Chapter 1 was run, this is one of `celltype` (bibliography annotation),
 whichever column is set here.
 
 ```{r section_13_cell_type_subsets}
-pseudobulk_annot_col <- "celltype_curated"
+pseudobulk_annot_col <- "celltype"
 
 # Inspect how many cells each cell type has before subsetting
 table(ath_sc[[pseudobulk_annot_col]])
@@ -1145,9 +1144,9 @@ cell_type_subsets <- create_cell_type_subsets(
 message("\nOK SECTION 13 COMPLETE: cell-type subsets created")
 ```
 
-Cells per cell type (bibliography annotation `celltype_curated`; the three
-epidermis hypocotyl subclusters and the still-numeric unannotated clusters
-are kept separate at this stage):
+Cells per cell type (bibliography annotation `celltype`; the three epidermis
+hypocotyl subclusters and the still-numeric unannotated clusters are kept
+separate at this stage):
 
 | Cell type | Cells |
 |---|---:|
@@ -1499,19 +1498,44 @@ os.makedirs(dir_pseudotime, exist_ok=True)
 print("SECTION 23 COMPLETE: setup done")
 ```
 
+\newpage
+
 ## Section 24 - Load curated object
 
 This section loads the `.h5ad` object exported at the end of the R workflow. The
 `INPUT_H5AD` path points to that file, and `ANNOTATION_COL` selects which cell
 type annotation column will be used for plotting and selecting cells.
 
+Up to three annotation columns can be present, depending on which optional
+sections were run in Step 1:
+
+- `celltype` -- the direct output of Section 7 (bibliography-marker annotation).
+  The rawest of the three, and always present.
+- `celltype_grouped` -- present only if Section 10 was run. Same as `celltype`,
+  but with related subclusters merged into a single label (e.g. the two
+  epidermis cotyledon subclusters collapsed into one).
+- `celltype_curated` -- present only if Section 11 was run. The manually
+  curated annotation, built by inspecting and relabeling subclusters.
+
+Set `ANNOTATION_COL` to whichever of these matches how far the curation went in
+Step 1: `celltype` if Section 10/11 were skipped, `celltype_grouped` if only
+Section 10 was used, `celltype_curated` if Section 11 was used.
+
+The example below uses `celltype`, the rawest of the three. Under this column,
+epidermis cotyledon is split into `Epidermis Cotyledon.1` and `.2` -- both
+options for handling this are shown in Sections 25-26 below.
+
 The function also standardizes coordinate names so the object works cleanly with
-Scanpy. It saves an overview UMAP and prints the available cell types, which are
-used to choose the trajectory cells in the next section.
+Scanpy. It prints the annotation columns available in the loaded object -- use
+this to confirm `ANNOTATION_COL` is set correctly -- then saves an overview UMAP
+and prints the available cell types, which are used to choose the trajectory
+cells in the next section.
 
 ```{python section_24_load_object, eval=FALSE}
 INPUT_H5AD     = "/workspace/results/objects/ath_sc_curated.h5ad"
-ANNOTATION_COL = "celltype_curated"
+# "celltype" (Section 7) is always present. Switch to "celltype_grouped" if
+# Section 10 was used, or "celltype_curated" if Section 11 was used.
+ANNOTATION_COL = "celltype"
 N_JOBS         = 4
 
 adata, N_JOBS = load_curated_object(
@@ -1526,17 +1550,47 @@ Representative output from Section 24:
 
 ![Overview UMAP colored by curated cell type.](assets/pseudotime_umap_overview.pdf){width=30%}
 
+\newpage
+
 ## Section 25 - Cell type selection
 
 This section selects which cell types will be used for trajectory inference. The
 list is set in `TRAJECTORY_CLUSTERS`, and the names must match the cell-type
 labels printed in Section 24.
 
-In this report, only `epidermis cotyledon` is selected. The preview UMAP shows
+In this report, only epidermis cotyledon is selected. The preview UMAP shows
 these cells before fitting the trajectory, which helps confirm that the intended
 population was chosen.
 
-```{python section_25_cell_selection, eval=FALSE}
+The exact label(s) to use here depend on which `ANNOTATION_COL` was set in
+Section 24:
+
+- With `ANNOTATION_COL = "celltype"` (raw), the two cotyledon subclusters are
+  told apart and both must be listed.
+- With `ANNOTATION_COL = "celltype_grouped"` (Section 10), all cotyledon cells
+  are already one population.
+
+**Tip:** if the goal is to evaluate the trajectory across the whole cell type
+without splitting it into subclusters, `celltype_grouped` is the better choice
+here.
+
+Option A -- with `ANNOTATION_COL = "celltype"` (raw, subclusters told apart):
+
+```{python section_25_cell_selection_celltype, eval=FALSE}
+TRAJECTORY_CLUSTERS = ["Epidermis Cotyledon.1", "Epidermis Cotyledon.2"]
+
+adata_sub = preview_trajectory_selection(
+    adata          = adata,
+    clusters       = TRAJECTORY_CLUSTERS,
+    annotation_col = ANNOTATION_COL,
+    dir_pseudotime = dir_pseudotime,
+)
+```
+
+Option B -- with `ANNOTATION_COL = "celltype_grouped"` (all cotyledon cells as
+one population; preferred when subclusters should not be told apart):
+
+```{python section_25_cell_selection_grouped, eval=FALSE}
 TRAJECTORY_CLUSTERS = ["Epidermis Cotyledon"]
 
 adata_sub = preview_trajectory_selection(
@@ -1551,12 +1605,15 @@ Representative output from Section 25:
 
 ![UMAP of the epidermis cotyledon cells selected for the trajectory.](assets/pseudotime_umap_selection.pdf){width=30%}
 
+\newpage
+
 ## Section 26 - Trajectory inference
 
 This section fits the pseudotime trajectory for the selected cells. The
-`ROOT_CLUSTER` defines where pseudotime starts. Here, the root is set to
-`epidermis cotyledon`, so the trajectory is oriented within that selected
-population.
+`ROOT_CLUSTER` defines where pseudotime starts, and must be a single existing
+label (not a list): with raw `celltype` this means picking one of the two
+cotyledon subclusters (the larger one, `.1`, is used below); with
+`celltype_grouped` it is simply the merged `Epidermis Cotyledon` label.
 
 `TRAJECTORY_RUNS` stores the trajectory settings to test. Each run creates its
 own output folder, making it possible to compare parameter choices without
@@ -1567,7 +1624,30 @@ Here, `eigs = 3` means that three diffusion components are used before fitting
 the trajectory. The outputs include the trajectory graph, pseudotime
 visualization, and selected root cell plot inside `results/09_pseudotime/`.
 
-```{python section_26_trajectory, eval=FALSE}
+Option A -- with `ANNOTATION_COL = "celltype"` (raw, pick one of the two
+cotyledon subclusters as root -- the larger one, `.1`, is used here):
+
+```{python section_26_trajectory_celltype, eval=FALSE}
+ROOT_CLUSTER = "Epidermis Cotyledon.1"
+
+TRAJECTORY_RUNS = [
+    trajectory_run(nodes=50, sigma=0.3, lambda_value=200, eigs=3, seed=3),
+]
+
+adata_traj, selected_trajectory_dir, trajectory_runs = run_trajectory_runs(
+    adata           = adata,
+    clusters        = TRAJECTORY_CLUSTERS,
+    root_cluster    = ROOT_CLUSTER,
+    annotation_col  = ANNOTATION_COL,
+    output_base_dir = dir_pseudotime,
+    runs            = TRAJECTORY_RUNS,
+)
+```
+
+Option B -- with `ANNOTATION_COL = "celltype_grouped"` (preferred when
+evaluating the trajectory across the whole cell type):
+
+```{python section_26_trajectory_grouped, eval=FALSE}
 ROOT_CLUSTER = "Epidermis Cotyledon"
 
 TRAJECTORY_RUNS = [
